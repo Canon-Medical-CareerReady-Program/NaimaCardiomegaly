@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import filedialog
 from PIL import ImageTk, Image
 
+
+# Opens file explorer to insert an image (either a png, jpg or a jpeg file)
 def open_file():
     file_path = filedialog.askopenfilename(filetypes=[("Image Files", "*.png *.jpg *.jpeg")])
     if file_path:
@@ -16,13 +18,20 @@ def open_file():
 window = tk.Tk()
 window.title("Cardiomegaly Detector")
 
-# Create a button to open a new window
+# Create a button to open a new window for file explorer
 button = tk.Button(window, text="Open Image", command=open_file)
 button.pack()
+button.place(x=50, y=100)
+button.configure(bg="#797EF6")
 
-#creating a label to store the image
+
+title_label= tk.Label(window,text="Cardiomegaly Detector", font=("Verdana",12))
+title_label.place(x=50, y=50)
+
+# Creating a label to store the image
 image_label = tk.Label(window)
 image_label.pack()
+
 
 # Run the main event loop
 window.mainloop()
