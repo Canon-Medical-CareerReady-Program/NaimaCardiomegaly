@@ -1,3 +1,4 @@
+
 import tkinter as tk
 from tkinter import filedialog
 from PIL import ImageTk, Image
@@ -8,6 +9,7 @@ def open_image():
     file_path = filedialog.askopenfilename(filetypes=[("Image Files", "*.png *.jpg *.jpeg *.gif")])
     if file_path:
         image = tk.PhotoImage(file=file_path)
+        canvas.config(width=image.width(), height=image.height())
         canvas.create_image(0, 0, anchor="nw", image=image)
         canvas.image = image  # Save a reference to the image to prevent it from being garbage collected
 
@@ -57,8 +59,8 @@ def stop_drawing():
     canvas.unbind("<B1-Motion>")
     canvas.delete("line1")
     canvas.delete("line2")
-    Hcoordinates_label.config(text="")
     Lcoordinates_label.config(text="")
+    Hcoordinates_label.config(text="")
 
 
 
@@ -67,16 +69,14 @@ window = tk.Tk()
 window.title("Cardiomegaly Detector")
 window.state("zoomed")
 
+
 # Creates a frame for the buttons
-button_frame= tk.Frame(window,bg="red")
-button_frame.pack()
-button_frame.config(width=400)
+button_frame= tk.Frame(window,bg="lightgray", width=400)
+button_frame.pack(side=tk.LEFT, fill=tk.BOTH)
 
 # Creates the canvas
-canvas = tk.Canvas(window,bg="blue")
-canvas.pack(side=tk.RIGHT,fill=tk.BOTH,expand=True)
-
-
+canvas = tk.Canvas(window)
+canvas.pack(side=tk.RIGHT, fill=tk.Y, expand=True)
 
 # Create a button to open a new window for file explorer
 button = tk.Button(button_frame, text="Open Image", command=open_image)
@@ -102,13 +102,16 @@ stop_button.pack()
 stop_button.configure(bg="#D31A38")
 stop_button.place(x=50, y=330)
 
+
 #Creates a label for the heart co-ordinates
-Hcoordinates_label = tk.Label(button_frame, text="", font=("Verdana",8))
+Hcoordinates_label = tk.Label(button_frame, text="", font=("Verdana",8),bg="lightgray")
 Hcoordinates_label.pack()
+Hcoordinates_label.place(x=50,y=800)
 
 # Creates a label for the heart co-ordinates
-Lcoordinates_label = tk.Label(button_frame, text="", font=("Verdana",8))
+Lcoordinates_label = tk.Label(button_frame, text="", font=("Verdana",8),bg="lightgray")
 Lcoordinates_label.pack()
+Lcoordinates_label.place(x=50,y=820)
 
 # Creates a label to show the user what its called lmao
 title_label= tk.Label(button_frame,text="Cardiomegaly Detector", font=("Verdana",12),bg="lightgray")
@@ -118,10 +121,9 @@ title_label.place(x=50, y=50)
 subheader_label= tk.Label(button_frame,text="Drawing Tools", font=("Verdana",12),bg="lightgray")
 subheader_label.place(x=50,y=200)
 
-
-
-
-
+# Creates a label to show the user the co-ordinates
+coordinates_label= tk.Label(button_frame,text="Co-ordinates",font=("Verdana",12),bg="lightgray")
+coordinates_label.place(x=50,y=750)
 
 # Run the main event loop
 window.mainloop()
