@@ -5,10 +5,9 @@ from tkinter import ttk
 
 # Opens file explorer to insert an image (either a png, jpg or a jpeg file)
 def open_image():
-    file_path = filedialog.askopenfilename(filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.gif")])
+    file_path = filedialog.askopenfilename(filetypes=[("Image Files", "*.png *.jpg *.jpeg *.gif")])
     if file_path:
         image = tk.PhotoImage(file=file_path)
-        canvas.config(width=image.width(), height=image.height())
         canvas.create_image(0, 0, anchor="nw", image=image)
         canvas.image = image  # Save a reference to the image to prevent it from being garbage collected
 
@@ -58,70 +57,67 @@ def stop_drawing():
     canvas.unbind("<B1-Motion>")
     canvas.delete("line1")
     canvas.delete("line2")
-
-
-
+    Hcoordinates_label.config(text="")
+    Lcoordinates_label.config(text="")
 
 
 
 # Create the main window
 window = tk.Tk()
 window.title("Cardiomegaly Detector")
-window.geometry("750x500")
+window.state("zoomed")
+
+# Creates a frame for the buttons
+button_frame= tk.Frame(window,bg="red")
+button_frame.pack()
+button_frame.config(width=400)
+
+# Creates the canvas
+canvas = tk.Canvas(window,bg="blue")
+canvas.pack(side=tk.RIGHT,fill=tk.BOTH,expand=True)
+
+
 
 # Create a button to open a new window for file explorer
-button = tk.Button(window, text="Open Image", command=open_image)
+button = tk.Button(button_frame, text="Open Image", command=open_image)
 button.pack()
 button.place(x=50, y=100)
 button.configure(bg="#797EF6")
 
 # Creates a button to draw the heart diameter
-start_hbutton= tk.Button(window,text="Draw Heart Diameter",command=start_drawing_hline)
+start_hbutton= tk.Button(button_frame,text="Draw Heart Diameter",command=start_drawing_hline)
 start_hbutton.pack()
 start_hbutton.configure(bg="#797EF6")
 start_hbutton.place(x=50, y=250)
 
 # Creates a button to draw the lung diameter
-start_Lbutton= tk.Button(window,text="Draw Lung Diameter",command=start_drawing_Lline)
+start_Lbutton= tk.Button(button_frame,text="Draw Lung Diameter",command=start_drawing_Lline)
 start_Lbutton.pack()
 start_Lbutton.configure(bg="#797EF6")
 start_Lbutton.place(x=50, y=290)
 
 # Creates a button to clear the canvas
-stop_button = tk.Button(window, text="Clear Canvas", command=stop_drawing)
+stop_button = tk.Button(button_frame, text="Clear Canvas", command=stop_drawing)
 stop_button.pack()
 stop_button.configure(bg="#D31A38")
 stop_button.place(x=50, y=330)
 
-# Creates the canvas
-canvas = tk.Canvas(window)
-canvas.pack()
-
-
-
-# Frame inside the canvas
-frame = tk.Frame(canvas)
-canvas.create_window((0, 0), window=frame, anchor="nw")
-
 #Creates a label for the heart co-ordinates
-Hcoordinates_label = tk.Label(window, text="", font=("Verdana",8))
+Hcoordinates_label = tk.Label(button_frame, text="", font=("Verdana",8))
 Hcoordinates_label.pack()
 
 # Creates a label for the heart co-ordinates
-Lcoordinates_label = tk.Label(window, text="", font=("Verdana",8))
+Lcoordinates_label = tk.Label(button_frame, text="", font=("Verdana",8))
 Lcoordinates_label.pack()
 
 # Creates a label to show the user what its called lmao
-title_label= tk.Label(window,text="Cardiomegaly Detector", font=("Verdana",12))
+title_label= tk.Label(button_frame,text="Cardiomegaly Detector", font=("Verdana",12),bg="lightgray")
 title_label.place(x=50, y=50)
 
 # Creates a label to show the user the buttons that they can make measurements on
-subheader_label= tk.Label(window,text="Drawing Tools", font=("Verdana",12))
+subheader_label= tk.Label(button_frame,text="Drawing Tools", font=("Verdana",12),bg="lightgray")
 subheader_label.place(x=50,y=200)
 
-# Creating a label to store the image
-image_label = tk.Label(window)
-image_label.pack()
 
 
 
