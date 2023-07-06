@@ -5,6 +5,10 @@ from PIL import ImageTk, Image
 from tkinter import ttk
 from math import sqrt
 
+
+Hdistance=0
+Ldistance=0
+
 # Opens file explorer to insert an image (either a png, jpg or a jpeg file)
 def open_image():
     file_path = filedialog.askopenfilename(filetypes=[("Image Files", "*.png *.jpg *.jpeg *.gif")])
@@ -21,20 +25,18 @@ def start_drawing_hline():
     canvas.bind("<Button-1>", start_hline)
     canvas.bind("<ButtonRelease-1>",calculate_Hdistance)
     
-    
-
-# Calculates the distance of the heart diameter (in pixels)
+    # Calculates the distance of the heart diameter (in pixels)
 def calculate_Hdistance(event):
+    global Hdistance
     x1, y1 = line1_start_x, line1_start_y
     x2, y2 = event.x, event.y
     Hdistance = sqrt((x2 - x1)**2 + (y2 - y1)**2)
     Hdistance_label.config(text=f"Heart Distance: {Hdistance:.2f} px")
-
-    return Hdistance    
+    
 
 # What happens when the mouse is dragged along the image for the heart diameter
 def start_hline(event):
-    global line1_start_x, line1_start_y
+    global line1_start_x, line1_start_y, Hdistance
     line1_start_x = event.x
     line1_start_y = event.y
     canvas.bind("<B1-Motion>", draw_hline)
@@ -54,21 +56,20 @@ def draw_hline(event):
 def start_drawing_Lline():
     canvas.bind("<Button-1>", start_Lline)
     canvas.bind("<ButtonRelease-1>",calculate_Ldistance)
-    
-    
 
 # Calculates lung distance
 def calculate_Ldistance(event):
+    global Ldistance
     x1, y1 = line2_start_x, line2_start_y
     x2, y2 = event.x, event.y
     Ldistance = sqrt((x2 - x1)**2 + (y2 - y1)**2)
     Ldistance_label.config(text=f"Lungs Distance: {Ldistance:.2f} px") 
     
-    return Ldistance 
+  
 
 # What happens when the mouse is dragged along the image for the lung diameter
 def start_Lline(event):
-    global line2_start_x, line2_start_y
+    global line2_start_x, line2_start_y, Ldistance
     line2_start_x = event.x
     line2_start_y = event.y
     canvas.bind("<B1-Motion>", draw_Lline)
@@ -82,11 +83,15 @@ def draw_Lline(event):
     Lcoordinates_label.config(text=f"Lungs-  Start: ({line2_start_x},{line2_start_y}) End: ({event.x},{event.y})")
 
 
-#Calculates the ratio
-def calculate_ratio(Hdistance, Ldistance):
-    ct_ratio= float(Hdistance/Ldistance)
-    ct_ratio_label.config(text=f"Cardiothoraic Ratio: {ct_ratio:.2f}")
-    canvas.bind("<ButtonRelease-1>",calculate_ratio)
+def calculate_ratio():
+    global Hdistance, Ldistance
+    if Hdistance !=0 and Ldistance !=0:
+        ratio = Hdistance / Ldistance
+        ratio_label.config(text=f"Cardiothoracic Ratio: {ratio:.2f}")
+    else:
+        ratio_label.config(text=f"Cannot calculate. Distances missing")
+    
+    
 
 # Deletes the lines drawn
 def stop_drawing():
@@ -98,7 +103,7 @@ def stop_drawing():
     Hcoordinates_label.config(text="")
     Ldistance_label.config(text="")
     Hdistance_label.config(text="")
-
+    ratio_label.config(text="")
   
 
 
@@ -139,9 +144,12 @@ stop_button = tk.Button(button_frame, text="Clear Canvas", command=stop_drawing)
 stop_button.configure(bg="#D31A38")
 stop_button.place(x=50, y=330)
 
-# Creates a button to calculate the cardiothoraic ratio
-calculate_button= tk.Button(button_frame, text="Calculate", command=calculate_ratio)
-calculate_button.place(x=50,y=150)
+# Creates a button to calculate the ratio
+calculate_button = tk.Button(button_frame, text="Calculate Ratio", command=calculate_ratio)
+calculate_button.pack()
+calculate_button.place(x=50, y=150)
+
+
 
 
 
@@ -178,9 +186,10 @@ coordinates_label.place(x=50,y=750)
 distances_label=tk.Label(button_frame,text="Distances:",font=("Verdana",12),bg="lightgray")
 distances_label.place(x=50,y=470)
 
-# Creates a label to show the user the cardiothoraic ratio
-ct_ratio_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
-ct_ratio_label.place(x=50, y=600)
+# Creates a label to show the user the ratio
+ratio_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray" )
+ratio_label.place(x=50, y=600)
+
 
 # Run the main event loop
 window.mainloop()
