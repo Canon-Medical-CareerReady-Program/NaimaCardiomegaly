@@ -146,8 +146,8 @@ stop_button.place(x=50, y=330)
 
 # Creates a button to calculate the ratio
 calculate_button = tk.Button(button_frame, text="Calculate Ratio", command=calculate_ratio)
-calculate_button.pack()
-calculate_button.place(x=50, y=150)
+calculate_button.configure(bg="#797EF6")
+calculate_button.place(x=50, y=520)
 
 
 
@@ -164,11 +164,11 @@ Lcoordinates_label.place(x=50,y=820)
 
 # Creates a label to display the distance of the heart
 Hdistance_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
-Hdistance_label.place(x=50, y=500)
+Hdistance_label.place(x=50, y=430)
 
 #  Creates a label to display the distance of the lungs
 Ldistance_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
-Ldistance_label.place(x=50, y=530)
+Ldistance_label.place(x=50, y=470)
 
 # Creates a label to show the user what its called lmao
 title_label= tk.Label(button_frame,text="Cardiomegaly Detector", font=("Verdana",12),bg="lightgray")
@@ -184,11 +184,11 @@ coordinates_label.place(x=50,y=750)
 
 #Creates a label to show the user the distances
 distances_label=tk.Label(button_frame,text="Distances:",font=("Verdana",12),bg="lightgray")
-distances_label.place(x=50,y=470)
+distances_label.place(x=50,y=400)
 
 # Creates a label to show the user the ratio
 ratio_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray" )
-ratio_label.place(x=50, y=600)
+ratio_label.place(x=50, y=570)
 
 
 # Run the main event loop
