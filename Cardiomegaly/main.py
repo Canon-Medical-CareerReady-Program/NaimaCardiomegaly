@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import filedialog
 from PIL import ImageTk, Image
 from tkinter import ttk
+from math import sqrt
 
 # Opens file explorer to insert an image (either a png, jpg or a jpeg file)
 def open_image():
@@ -16,6 +17,13 @@ def open_image():
 # What happens when the mouse is pressed down on the image for the heart diameter
 def start_drawing_hline():
     canvas.bind("<Button-1>", start_hline)
+    canvas.bind("<ButtonRelease-1>",calculate_Hdistance)
+
+def calculate_Hdistance(event):
+    x1, y1 = line1_start_x, line1_start_y
+    x2, y2 = event.x, event.y
+    Hdistance = sqrt((x2 - x1)**2 + (y2 - y1)**2)
+    Hdistance_label.config(text=f"Heart Distance: {Hdistance:.2f} px")    
 
 # What happens when the mouse is dragged along the image for the heart diameter
 def start_hline(event):
@@ -28,6 +36,7 @@ def start_hline(event):
 def draw_hline(event):
     canvas.delete("line1")
     canvas.create_line(line1_start_x, line1_start_y, event.x, event.y, tags="line1", fill="yellow", width=2)
+    
 
 # Displays the co-ordinates of where the heart diameter starts and ends
 
@@ -36,6 +45,14 @@ def draw_hline(event):
 # What happens when the mouse is pressed down on the image for the lung diameter
 def start_drawing_Lline():
     canvas.bind("<Button-1>", start_Lline)
+    canvas.bind("<ButtonRelease-1>",calculate_Ldistance)
+
+# Calculates lung distance
+def calculate_Ldistance(event):
+    x1, y1 = line2_start_x, line2_start_y
+    x2, y2 = event.x, event.y
+    Ldistance = sqrt((x2 - x1)**2 + (y2 - y1)**2)
+    Ldistance_label.config(text=f"Lungs Distance: {Ldistance:.2f} px")  
 
 # What happens when the mouse is dragged along the image for the lung diameter
 def start_Lline(event):
@@ -61,6 +78,9 @@ def stop_drawing():
     canvas.delete("line2")
     Lcoordinates_label.config(text="")
     Hcoordinates_label.config(text="")
+
+
+  
 
 
 
@@ -112,6 +132,14 @@ Hcoordinates_label.place(x=50,y=800)
 Lcoordinates_label = tk.Label(button_frame, text="", font=("Verdana",8),bg="lightgray")
 Lcoordinates_label.pack()
 Lcoordinates_label.place(x=50,y=820)
+
+# Creates a label to display the distance of the heart
+Hdistance_label= tk.Label(button_frame, text="", font=("Verdana",12),bg="lightgray")
+Hdistance_label.place(x=50, y=500)
+
+#  Creates a label to display the distance of the lungs
+Ldistance_label= tk.Label(button_frame, text="", font=("Verdana",12),bg="lightgray")
+Ldistance_label.place(x=50, y=550)
 
 # Creates a label to show the user what its called lmao
 title_label= tk.Label(button_frame,text="Cardiomegaly Detector", font=("Verdana",12),bg="lightgray")
