@@ -29,7 +29,7 @@ def calculate_Hdistance(event):
     x2, y2 = event.x, event.y
     Hdistance = sqrt((x2 - x1)**2 + (y2 - y1)**2)
     Hdistance_label.config(text=f"Heart Distance: {Hdistance:.2f} px")
-    
+    calculate_ratio_and_percentage()
 
 # What happens when the mouse is dragged along the image for the heart diameter
 def start_hline(event):
@@ -61,7 +61,7 @@ def calculate_Ldistance(event):
     x2, y2 = event.x, event.y
     Ldistance = sqrt((x2 - x1)**2 + (y2 - y1)**2)
     Ldistance_label.config(text=f"Lungs Distance: {Ldistance:.2f} px") 
-    
+    calculate_ratio_and_percentage()
   
 
 # What happens when the mouse is dragged along the image for the lung diameter
@@ -159,10 +159,6 @@ stop_button = tk.Button(button_frame, text="Clear Canvas", command=stop_drawing)
 stop_button.configure(bg="#D31A38")
 stop_button.place(x=50, y=330)
 
-# Creates a button to calculate the ratio
-calculate_button = tk.Button(button_frame, text="Calculate", command=calculate_ratio_and_percentage)
-calculate_button.configure(bg="#797EF6")
-calculate_button.place(x=50, y=520)
 
 
 
@@ -211,7 +207,7 @@ percentage_label.place(x=50, y=590)
 
 # Creates a label to display the diagnosis of the patient
 diagnosis_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
-diagnosis_label.place(x=50, y=630 )
+diagnosis_label.place(x=50, y=630)
 
 # Run the main event loop
 window.mainloop()
