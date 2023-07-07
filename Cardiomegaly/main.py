@@ -1,8 +1,5 @@
-
 import tkinter as tk
 from tkinter import filedialog
-from PIL import ImageTk, Image
-from tkinter import ttk
 from math import sqrt
 
 
@@ -83,15 +80,33 @@ def draw_Lline(event):
     Lcoordinates_label.config(text=f"Lungs-  Start: ({line2_start_x},{line2_start_y}) End: ({event.x},{event.y})")
 
 
-def calculate_ratio():
+
+
+
+# Calculates the cardiothoracic ratio
+def calculate_ratio_and_percentage():
     global Hdistance, Ldistance
     if Hdistance !=0 and Ldistance !=0:
+        
         ratio = Hdistance / Ldistance
         ratio_label.config(text=f"Cardiothoracic Ratio: {ratio:.2f}")
+        
+        percentage= ratio*100
+        percentage_label.config(text=f"Percentage: {percentage:.2f}%")
+
+        if ratio >0.5:
+            diagnosis_label.config(text="The patient exhibits symptoms of having \ncardiomegaly")
+        else:
+            diagnosis_label.config(text="The patient does not exhibit symptoms of \nhaving cardiomegaly")
+    
     else:
         ratio_label.config(text=f"Cannot calculate. Distances missing")
-    
-    
+
+
+
+
+
+
 
 # Deletes the lines drawn
 def stop_drawing():
@@ -104,7 +119,7 @@ def stop_drawing():
     Ldistance_label.config(text="")
     Hdistance_label.config(text="")
     ratio_label.config(text="")
-  
+    percentage_label.config(text="")
 
 
 
@@ -145,7 +160,7 @@ stop_button.configure(bg="#D31A38")
 stop_button.place(x=50, y=330)
 
 # Creates a button to calculate the ratio
-calculate_button = tk.Button(button_frame, text="Calculate Ratio", command=calculate_ratio)
+calculate_button = tk.Button(button_frame, text="Calculate", command=calculate_ratio_and_percentage)
 calculate_button.configure(bg="#797EF6")
 calculate_button.place(x=50, y=520)
 
@@ -190,6 +205,13 @@ distances_label.place(x=50,y=400)
 ratio_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray" )
 ratio_label.place(x=50, y=570)
 
+# Creates a label to display the percentage
+percentage_label=tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
+percentage_label.place(x=50, y=590)
+
+# Creates a label to display the diagnosis of the patient
+diagnosis_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
+diagnosis_label.place(x=50, y=630 )
 
 # Run the main event loop
 window.mainloop()
