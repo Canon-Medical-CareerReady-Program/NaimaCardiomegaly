@@ -1,7 +1,11 @@
 import tkinter as tk
 from tkinter import filedialog
 from math import sqrt
+from coordinate import Coordinate
+from measurement import Measurement
 
+heart=Measurement()
+thorax=Measurement()
 
 Hdistance=0
 Ldistance=0
@@ -24,28 +28,29 @@ def start_drawing_hline():
     
     # Calculates the distance of the heart diameter (in pixels)
 def calculate_Hdistance(event):
-    global Hdistance
-    x1, y1 = line1_start_x, line1_start_y
-    x2, y2 = event.x, event.y
-    Hdistance = sqrt((x2 - x1)**2 + (y2 - y1)**2)
-    Hdistance_label.config(text=f"Heart Distance: {Hdistance:.2f} px")
+    global heart
+    Hdistance_label.config(text=f"Heart Distance: {heart.distance():.2f} px")
     calculate_ratio_and_percentage()
 
 # What happens when the mouse is dragged along the image for the heart diameter
 def start_hline(event):
-    global line1_start_x, line1_start_y, Hdistance
+    global line1_start_x, line1_start_y, Hdistance, heart
     line1_start_x = event.x
     line1_start_y = event.y
+    heart.start.x = event.x
+    heart.start.y = event.y
     canvas.bind("<B1-Motion>", draw_hline)
 
 # The heart line being seen by the user
 def draw_hline(event):
     canvas.delete("line1")
     canvas.create_line(line1_start_x, line1_start_y, event.x, event.y, tags="line1", fill="yellow", width=2)
+    heart.end.x = event.x
+    heart.end.y = event.y
     
 # Displays the co-ordinates of where the heart diameter starts and ends
     Hcoordinates_label.config(text=f"Heart-  Start: ({line1_start_x},{line1_start_y}) End: ({event.x},{event.y})")
-
+    
 
 
 
@@ -56,25 +61,28 @@ def start_drawing_Lline():
 
 # Calculates lung distance
 def calculate_Ldistance(event):
-    global Ldistance
-    x1, y1 = line2_start_x, line2_start_y
-    x2, y2 = event.x, event.y
-    Ldistance = sqrt((x2 - x1)**2 + (y2 - y1)**2)
-    Ldistance_label.config(text=f"Lungs Distance: {Ldistance:.2f} px") 
+    global thorax
+    Ldistance_label.config(text=f"Lungs Distance: {thorax.distance():.2f} px") 
     calculate_ratio_and_percentage()
   
 
 # What happens when the mouse is dragged along the image for the lung diameter
 def start_Lline(event):
-    global line2_start_x, line2_start_y, Ldistance
+    global line2_start_x, line2_start_y, Ldistance, thorax
     line2_start_x = event.x
     line2_start_y = event.y
+    # thorax.start.x = event.x
+    # thorax.start.y = event.y
+    thorax.start = Coordinate(event.x, event.y)
     canvas.bind("<B1-Motion>", draw_Lline)
 
 # The lung line being seen by the user
 def draw_Lline(event):
     canvas.delete("line2")
     canvas.create_line(line2_start_x, line2_start_y, event.x, event.y, tags="line2", fill="red", width=2)
+    thorax.end = Coordinate(event.x, event.y)
+    # thorax.end.x = event.x
+    # thorax.end.y = event.y
 
 # Displays the co-ordinates of where the lung diameter starts and ends
     Lcoordinates_label.config(text=f"Lungs-  Start: ({line2_start_x},{line2_start_y}) End: ({event.x},{event.y})")
@@ -85,10 +93,13 @@ def draw_Lline(event):
 
 # Calculates the cardiothoracic ratio
 def calculate_ratio_and_percentage():
-    global Hdistance, Ldistance
-    if Hdistance !=0 and Ldistance !=0:
-        
-        ratio = Hdistance / Ldistance
+    global heart
+    global thorax
+    if heart.distance() !=0 and thorax.distance() !=0:
+        heart_dist= heart.distance()
+        thorax_dist= thorax.distance()
+
+        ratio = heart_dist / thorax_dist
         ratio_label.config(text=f"Cardiothoracic Ratio: {ratio:.2f}")
         
         percentage= ratio*100
@@ -120,7 +131,7 @@ def stop_drawing():
     Hdistance_label.config(text="")
     ratio_label.config(text="")
     percentage_label.config(text="")
-
+    diagnosis_label.config(text="")
 
 
 # Create the main window
