@@ -7,6 +7,7 @@ from measurement import Measurement
 heart=Measurement()
 thorax=Measurement()
 
+
 Hdistance=0
 Ldistance=0
 
@@ -34,9 +35,7 @@ def calculate_Hdistance(event):
 
 # What happens when the mouse is dragged along the image for the heart diameter
 def start_hline(event):
-    global line1_start_x, line1_start_y, Hdistance, heart
-    line1_start_x = event.x
-    line1_start_y = event.y
+    global heart
     heart.start.x = event.x
     heart.start.y = event.y
     canvas.bind("<B1-Motion>", draw_hline)
@@ -44,12 +43,12 @@ def start_hline(event):
 # The heart line being seen by the user
 def draw_hline(event):
     canvas.delete("line1")
-    canvas.create_line(line1_start_x, line1_start_y, event.x, event.y, tags="line1", fill="yellow", width=2)
+    canvas.create_line(heart.start.x, heart.start.y, event.x, event.y, tags="line1", fill="yellow", width=2)
     heart.end.x = event.x
     heart.end.y = event.y
     
 # Displays the co-ordinates of where the heart diameter starts and ends
-    Hcoordinates_label.config(text=f"Heart-  Start: ({line1_start_x},{line1_start_y}) End: ({event.x},{event.y})")
+    Hcoordinates_label.config(text=f"Heart-  Start: ({heart.start.x},{heart.start.y}) End: ({event.x},{event.y})")
     
 
 
@@ -68,24 +67,19 @@ def calculate_Ldistance(event):
 
 # What happens when the mouse is dragged along the image for the lung diameter
 def start_Lline(event):
-    global line2_start_x, line2_start_y, Ldistance, thorax
-    line2_start_x = event.x
-    line2_start_y = event.y
-    # thorax.start.x = event.x
-    # thorax.start.y = event.y
+    global thorax
     thorax.start = Coordinate(event.x, event.y)
     canvas.bind("<B1-Motion>", draw_Lline)
 
 # The lung line being seen by the user
 def draw_Lline(event):
     canvas.delete("line2")
-    canvas.create_line(line2_start_x, line2_start_y, event.x, event.y, tags="line2", fill="red", width=2)
+    canvas.create_line(thorax.start.x, thorax.start.y, event.x, event.y, tags="line2", fill="red", width=2)
     thorax.end = Coordinate(event.x, event.y)
-    # thorax.end.x = event.x
-    # thorax.end.y = event.y
+
 
 # Displays the co-ordinates of where the lung diameter starts and ends
-    Lcoordinates_label.config(text=f"Lungs-  Start: ({line2_start_x},{line2_start_y}) End: ({event.x},{event.y})")
+    Lcoordinates_label.config(text=f"Lungs-  Start: ({thorax.start.x},{thorax.start.y}) End: ({event.x},{event.y})")
 
 
 
@@ -132,7 +126,8 @@ def stop_drawing():
     ratio_label.config(text="")
     percentage_label.config(text="")
     diagnosis_label.config(text="")
-
+    heart.clear()
+    thorax.clear()
 
 # Create the main window
 window = tk.Tk()
