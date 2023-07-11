@@ -1,9 +1,10 @@
 from measurement import Measurement
 
 class Result:
-    def __init__(self):
+    def __init__(self, file_path):
        self.heart = Measurement()
        self.thorax = Measurement()
+       self.file_path = file_path
 
     def calculate_ratio(self):
         ratio= self.heart.distance() / self.thorax.distance()
@@ -16,6 +17,8 @@ class Result:
     def symptomatic(self):
         symptomatic = self.calculate_ratio() >0.5
         return symptomatic
+    
+
 
 
 

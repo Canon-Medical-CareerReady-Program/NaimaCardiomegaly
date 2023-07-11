@@ -7,16 +7,21 @@ from result import Result
 
 heart=Measurement()
 thorax=Measurement()
-current_result= Result()
-
+current_result= None
+image_results= []
 
 
 
 # Opens file explorer to insert an image (either a png, jpg or a jpeg file)
 def open_image():
-    file_path = filedialog.askopenfilename(filetypes=[("Image Files", "*.png *.jpg *.jpeg *.gif")])
-    if file_path:
-        image = tk.PhotoImage(file=file_path)
+    global current_result
+    file_paths = filedialog.askopenfilenames(filetypes=[("Image Files", "*.png *.jpg *.jpeg *.gif")])
+    if len(file_paths) > 0:
+
+        for file_path in file_paths:
+            image_results.append(Result(file_path))
+        current_result = image_results[0]    
+        image = tk.PhotoImage(file=current_result.file_path)
         canvas.config(width=image.width(), height=image.height())
         canvas.create_image(0, 0, anchor="nw", image=image)
         canvas.image = image  # Save a reference to the image to prevent it from being garbage collected
