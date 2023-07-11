@@ -10,8 +10,7 @@ thorax=Measurement()
 current_result= Result()
 
 
-Hdistance=0
-Ldistance=0
+
 
 # Opens file explorer to insert an image (either a png, jpg or a jpeg file)
 def open_image():
@@ -102,7 +101,7 @@ def calculate_ratio_and_percentage():
         current_result.calculate_percentage()
         percentage_label.config(text=f"Percentage: {current_result.calculate_percentage():.2f}%")
 
-        if current_result.calculate_ratio() >0.5:
+        if current_result.symptomatic():
             diagnosis_label.config(text="The patient exhibits symptoms of having \ncardiomegaly")
         else:
             diagnosis_label.config(text="The patient does not exhibit symptoms of \nhaving cardiomegaly")
