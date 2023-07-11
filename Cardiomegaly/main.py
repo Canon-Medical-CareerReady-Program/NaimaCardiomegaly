@@ -3,9 +3,11 @@ from tkinter import filedialog
 from math import sqrt
 from coordinate import Coordinate
 from measurement import Measurement
+from result import Result
 
 heart=Measurement()
 thorax=Measurement()
+current_result= Result()
 
 
 Hdistance=0
@@ -29,26 +31,26 @@ def start_drawing_hline():
     
     # Calculates the distance of the heart diameter (in pixels)
 def calculate_Hdistance(event):
-    global heart
-    Hdistance_label.config(text=f"Heart Distance: {heart.distance():.2f} px")
+    global current_result
+    Hdistance_label.config(text=f"Heart Distance: {current_result.heart.distance():.2f} px")
     calculate_ratio_and_percentage()
 
 # What happens when the mouse is dragged along the image for the heart diameter
 def start_hline(event):
-    global heart
-    heart.start.x = event.x
-    heart.start.y = event.y
+    global current_result
+    current_result.heart.start.x = event.x
+    current_result.heart.start.y = event.y
     canvas.bind("<B1-Motion>", draw_hline)
 
 # The heart line being seen by the user
 def draw_hline(event):
     canvas.delete("line1")
-    canvas.create_line(heart.start.x, heart.start.y, event.x, event.y, tags="line1", fill="yellow", width=2)
-    heart.end.x = event.x
-    heart.end.y = event.y
+    canvas.create_line(current_result.heart.start.x, current_result.heart.start.y, event.x, event.y, tags="line1", fill="yellow", width=2)
+    current_result.heart.end.x = event.x
+    current_result.heart.end.y = event.y
     
 # Displays the co-ordinates of where the heart diameter starts and ends
-    Hcoordinates_label.config(text=f"Heart-  Start: ({heart.start.x},{heart.start.y}) End: ({event.x},{event.y})")
+    Hcoordinates_label.config(text=f"Heart-  Start: ({current_result.heart.start.x},{current_result.heart.start.y}) End: ({event.x},{event.y})")
     
 
 
@@ -60,26 +62,26 @@ def start_drawing_Lline():
 
 # Calculates lung distance
 def calculate_Ldistance(event):
-    global thorax
-    Ldistance_label.config(text=f"Lungs Distance: {thorax.distance():.2f} px") 
+    global current_result
+    Ldistance_label.config(text=f"Lungs Distance: {current_result.thorax.distance():.2f} px") 
     calculate_ratio_and_percentage()
   
 
 # What happens when the mouse is dragged along the image for the lung diameter
 def start_Lline(event):
-    global thorax
-    thorax.start = Coordinate(event.x, event.y)
+    global current_result
+    current_result.thorax.start = Coordinate(event.x, event.y)
     canvas.bind("<B1-Motion>", draw_Lline)
 
 # The lung line being seen by the user
 def draw_Lline(event):
     canvas.delete("line2")
-    canvas.create_line(thorax.start.x, thorax.start.y, event.x, event.y, tags="line2", fill="red", width=2)
-    thorax.end = Coordinate(event.x, event.y)
+    canvas.create_line(current_result.thorax.start.x, current_result.thorax.start.y, event.x, event.y, tags="line2", fill="red", width=2)
+    current_result.thorax.end = Coordinate(event.x, event.y)
 
 
 # Displays the co-ordinates of where the lung diameter starts and ends
-    Lcoordinates_label.config(text=f"Lungs-  Start: ({thorax.start.x},{thorax.start.y}) End: ({event.x},{event.y})")
+    Lcoordinates_label.config(text=f"Lungs-  Start: ({current_result.thorax.start.x},{current_result.thorax.start.y}) End: ({event.x},{event.y})")
 
 
 
@@ -87,19 +89,20 @@ def draw_Lline(event):
 
 # Calculates the cardiothoracic ratio
 def calculate_ratio_and_percentage():
-    global heart
-    global thorax
-    if heart.distance() !=0 and thorax.distance() !=0:
-        heart_dist= heart.distance()
-        thorax_dist= thorax.distance()
 
-        ratio = heart_dist / thorax_dist
-        ratio_label.config(text=f"Cardiothoracic Ratio: {ratio:.2f}")
+    global current_result
+    heart_dist= current_result.heart.distance()
+    thorax_dist= current_result.thorax.distance()
+    
+
+    if heart_dist !=0 and thorax_dist !=0:
+        current_result.calculate_ratio()
+        ratio_label.config(text=f"Cardiothoracic Ratio: {current_result.calculate_ratio():.2f}")
         
-        percentage= ratio*100
-        percentage_label.config(text=f"Percentage: {percentage:.2f}%")
+        current_result.calculate_percentage()
+        percentage_label.config(text=f"Percentage: {current_result.calculate_percentage():.2f}%")
 
-        if ratio >0.5:
+        if current_result.calculate_ratio() >0.5:
             diagnosis_label.config(text="The patient exhibits symptoms of having \ncardiomegaly")
         else:
             diagnosis_label.config(text="The patient does not exhibit symptoms of \nhaving cardiomegaly")
@@ -126,8 +129,9 @@ def stop_drawing():
     ratio_label.config(text="")
     percentage_label.config(text="")
     diagnosis_label.config(text="")
-    heart.clear()
-    thorax.clear()
+    current_result.heart.clear()
+    current_result.thorax.clear()
+    
 
 # Create the main window
 window = tk.Tk()

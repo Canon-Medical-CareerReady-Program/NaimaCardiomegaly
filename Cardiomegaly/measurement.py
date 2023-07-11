@@ -2,9 +2,6 @@ from coordinate import Coordinate
 from math import sqrt
 
 class Measurement:
-    # start= Coordinate(0,0)
-    # end= Coordinate(0,0)
-
     def __init__(self):
         self.clear()
 
