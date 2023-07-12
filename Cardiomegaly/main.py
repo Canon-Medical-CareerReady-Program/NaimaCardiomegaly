@@ -2,10 +2,11 @@ import tkinter as tk
 from tkinter import filedialog
 from coordinate import Coordinate
 from result import Result
+from typing import List
 
 
-current_result= None
-image_results= []
+current_result :Result= None
+image_results :List[Result]= []
 image_results_index= 0
 
 # Creates the image/canvas
@@ -25,6 +26,9 @@ def update_image_to_index():
     update_thorax_distance()
 
     calculate_ratio_and_percentage()
+
+    update_heart_line()
+    update_thorax_line()
 
 # Opens file explorer to insert an image (either a png, jpg or a jpeg file)
 def open_image():
@@ -79,14 +83,22 @@ def start_hline(event):
 
 # The heart line being seen by the user
 def draw_hline(event):
-    canvas.delete("heart")
-    canvas.create_line(current_result.heart.start.x, current_result.heart.start.y, event.x, event.y, tags="heart", fill="yellow", width=2)
+    
     current_result.heart.end.x = event.x
     current_result.heart.end.y = event.y
+    update_heart_line()
+
     
 # Displays the co-ordinates of where the heart diameter starts and ends
     update_heart_coordinates()
     
+def update_heart_line():
+    canvas.delete("heart")
+    start = current_result.heart.start
+    end = current_result.heart.end
+    canvas.create_line(start.x, start.y, end.x, end.y, tags="heart", fill="yellow", width=2)
+
+
 def update_heart_coordinates():
     start = current_result.heart.start
     end = current_result.heart.end
@@ -119,11 +131,17 @@ def start_Lline(event):
 
 # The lung line being seen by the user
 def draw_Lline(event):
-    canvas.delete("thorax")
-    canvas.create_line(current_result.thorax.start.x, current_result.thorax.start.y, event.x, event.y, tags="thorax", fill="red", width=2)
     current_result.thorax.end = Coordinate(event.x, event.y)
+    update_thorax_line()
 
     update_thorax_coordinates()
+
+def update_thorax_line():
+    
+    start = current_result.thorax.start
+    end = current_result.thorax.end
+    canvas.delete("thorax")
+    canvas.create_line(start.x, start.y, end.x, end.y, tags="thorax", fill="red", width=2)
 
 # Updates the thorax coordinates depending on the image
 def update_thorax_coordinates():
