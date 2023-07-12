@@ -1,12 +1,9 @@
 import tkinter as tk
 from tkinter import filedialog
-from math import sqrt
 from coordinate import Coordinate
-from measurement import Measurement
 from result import Result
 
-heart=Measurement()
-thorax=Measurement()
+
 current_result= None
 image_results= []
 image_results_index= 0
