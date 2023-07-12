@@ -17,8 +17,14 @@ def update_image_to_index():
     canvas.config(width=image.width(), height=image.height())
     canvas.create_image(0, 0, anchor="nw", image=image)
     canvas.image = image  # Save a reference to the image to prevent it from being garbage collected
- 
+    
+    update_heart_coordinates()
+    update_thorax_coordinates()
 
+    update_heart_distance()
+    update_thorax_distance()
+
+    calculate_ratio_and_percentage()
 
 # Opens file explorer to insert an image (either a png, jpg or a jpeg file)
 def open_image():
@@ -54,11 +60,15 @@ def start_drawing_hline():
     canvas.bind("<Button-1>", start_hline)
     canvas.bind("<ButtonRelease-1>",calculate_Hdistance)
     
-    # Calculates the distance of the heart diameter (in pixels)
+# Calculates the distance of the heart diameter (in pixels)
 def calculate_Hdistance(event):
     global current_result
-    Hdistance_label.config(text=f"Heart Distance: {current_result.heart.distance():.2f} px")
+    update_heart_distance()
     calculate_ratio_and_percentage()
+
+def update_heart_distance():
+    distance = current_result.heart.distance()
+    Hdistance_label.config(text=f"Heart Distance: {distance:.2f} px")
 
 # What happens when the mouse is dragged along the image for the heart diameter
 def start_hline(event):
@@ -69,15 +79,18 @@ def start_hline(event):
 
 # The heart line being seen by the user
 def draw_hline(event):
-    canvas.delete("line1")
-    canvas.create_line(current_result.heart.start.x, current_result.heart.start.y, event.x, event.y, tags="line1", fill="yellow", width=2)
+    canvas.delete("heart")
+    canvas.create_line(current_result.heart.start.x, current_result.heart.start.y, event.x, event.y, tags="heart", fill="yellow", width=2)
     current_result.heart.end.x = event.x
     current_result.heart.end.y = event.y
     
 # Displays the co-ordinates of where the heart diameter starts and ends
-    Hcoordinates_label.config(text=f"Heart-  Start: ({current_result.heart.start.x},{current_result.heart.start.y}) End: ({event.x},{event.y})")
+    update_heart_coordinates()
     
-
+def update_heart_coordinates():
+    start = current_result.heart.start
+    end = current_result.heart.end
+    Hcoordinates_label.config(text=f"Heart-  Start: ({start.x},{start.y}) End: ({end.x},{end.y})")
 
 
 
@@ -90,9 +103,13 @@ def start_drawing_Lline():
 # Calculates lung distance
 def calculate_Ldistance(event):
     global current_result
-    Ldistance_label.config(text=f"Lungs Distance: {current_result.thorax.distance():.2f} px") 
+    update_thorax_distance()
     calculate_ratio_and_percentage()
   
+# Updating the thorax distance
+def update_thorax_distance():
+    distance = current_result.thorax.distance()
+    Ldistance_label.config(text=f"Thorax Distance: {distance:.2f} px") 
 
 # What happens when the mouse is dragged along the image for the lung diameter
 def start_Lline(event):
@@ -102,14 +119,17 @@ def start_Lline(event):
 
 # The lung line being seen by the user
 def draw_Lline(event):
-    canvas.delete("line2")
-    canvas.create_line(current_result.thorax.start.x, current_result.thorax.start.y, event.x, event.y, tags="line2", fill="red", width=2)
+    canvas.delete("thorax")
+    canvas.create_line(current_result.thorax.start.x, current_result.thorax.start.y, event.x, event.y, tags="thorax", fill="red", width=2)
     current_result.thorax.end = Coordinate(event.x, event.y)
 
-# Displays the co-ordinates of where the lung diameter starts and ends
-    Lcoordinates_label.config(text=f"Lungs-  Start: ({current_result.thorax.start.x},{current_result.thorax.start.y}) End: ({event.x},{event.y})")
+    update_thorax_coordinates()
 
-
+# Updates the thorax coordinates depending on the image
+def update_thorax_coordinates():
+    start = current_result.thorax.start
+    end = current_result.thorax.end
+    Lcoordinates_label.config(text=f"Thorax-  Start: ({start.x},{start.y}) End: ({end.x},{end.y})")
 
 
 
@@ -135,7 +155,8 @@ def calculate_ratio_and_percentage():
     
     else:
         ratio_label.config(text=f"Cannot calculate. Distances missing")
-
+        percentage_label.config(text="")
+        diagnosis_label.config(text="")
 
 
 
@@ -146,8 +167,8 @@ def calculate_ratio_and_percentage():
 def stop_drawing():
     canvas.unbind("<Button-1>")
     canvas.unbind("<B1-Motion>")
-    canvas.delete("line1")
-    canvas.delete("line2")
+    canvas.delete("heart")
+    canvas.delete("thorax")
     Lcoordinates_label.config(text="")
     Hcoordinates_label.config(text="")
     Ldistance_label.config(text="")
@@ -199,11 +220,11 @@ stop_button.place(x=50, y=330)
 
 # Creates a button to move to the next image
 next_image_button = tk.Button(button_frame, text=">", command= next_image)
-next_image_button.place(x=100, y=1000)
+next_image_button.place(x=100, y=0)
 
 # Creates a button to move to the previous image
 previous_image_button = tk.Button(button_frame, text="<", command=previous_image)
-previous_image_button.place(x=30, y=1000)
+previous_image_button.place(x=30, y=0)
 
 
 
