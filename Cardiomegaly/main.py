@@ -9,23 +9,47 @@ heart=Measurement()
 thorax=Measurement()
 current_result= None
 image_results= []
+image_results_index= 0
 
+# Creates the image/canvas
+def update_image_to_index():
+    global current_result, image_results, image_results_index
+
+    current_result = image_results[image_results_index]
+    image = tk.PhotoImage(file=current_result.file_path)
+    canvas.config(width=image.width(), height=image.height())
+    canvas.create_image(0, 0, anchor="nw", image=image)
+    canvas.image = image  # Save a reference to the image to prevent it from being garbage collected
+ 
 
 
 # Opens file explorer to insert an image (either a png, jpg or a jpeg file)
 def open_image():
-    global current_result
+    global current_result, image_results, image_results_index
     file_paths = filedialog.askopenfilenames(filetypes=[("Image Files", "*.png *.jpg *.jpeg *.gif")])
+    
     if len(file_paths) > 0:
-
+        image_results= []
         for file_path in file_paths:
             image_results.append(Result(file_path))
-        current_result = image_results[0]    
-        image = tk.PhotoImage(file=current_result.file_path)
-        canvas.config(width=image.width(), height=image.height())
-        canvas.create_image(0, 0, anchor="nw", image=image)
-        canvas.image = image  # Save a reference to the image to prevent it from being garbage collected
+        update_image_to_index()
+ 
 
+def next_image():
+    global current_result, image_results, image_results_index
+    
+    if image_results_index < len(image_results) - 1:
+        image_results_index = image_results_index + 1
+        update_image_to_index()
+    
+
+
+def previous_image():
+    global current_result, image_results, image_results_index
+
+    if image_results_index > 0:
+        image_results_index = image_results_index -1
+        update_image_to_index()
 
 
 # What happens when the mouse is pressed down on the image for the heart diameter
@@ -59,6 +83,8 @@ def draw_hline(event):
 
 
 
+
+
 # What happens when the mouse is pressed down on the image for the lung diameter
 def start_drawing_Lline():
     canvas.bind("<Button-1>", start_Lline)
@@ -82,7 +108,6 @@ def draw_Lline(event):
     canvas.delete("line2")
     canvas.create_line(current_result.thorax.start.x, current_result.thorax.start.y, event.x, event.y, tags="line2", fill="red", width=2)
     current_result.thorax.end = Coordinate(event.x, event.y)
-
 
 # Displays the co-ordinates of where the lung diameter starts and ends
     Lcoordinates_label.config(text=f"Lungs-  Start: ({current_result.thorax.start.x},{current_result.thorax.start.y}) End: ({event.x},{event.y})")
@@ -135,7 +160,9 @@ def stop_drawing():
     diagnosis_label.config(text="")
     current_result.heart.clear()
     current_result.thorax.clear()
-    
+
+
+
 
 # Create the main window
 window = tk.Tk()
@@ -173,9 +200,13 @@ stop_button = tk.Button(button_frame, text="Clear Canvas", command=stop_drawing)
 stop_button.configure(bg="#D31A38")
 stop_button.place(x=50, y=330)
 
+# Creates a button to move to the next image
+next_image_button = tk.Button(button_frame, text=">", command= next_image)
+next_image_button.place(x=100, y=1000)
 
-
-
+# Creates a button to move to the previous image
+previous_image_button = tk.Button(button_frame, text="<", command=previous_image)
+previous_image_button.place(x=30, y=1000)
 
 
 
