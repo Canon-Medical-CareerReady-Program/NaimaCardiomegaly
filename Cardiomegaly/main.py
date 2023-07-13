@@ -4,7 +4,7 @@ from coordinate import Coordinate
 from result import Result
 from typing import List
 from PIL import Image, ImageTk
-
+import csv
 
 current_result :Result= None
 image_results :List[Result]= []
@@ -96,6 +96,17 @@ def previous_image():
     if image_results_index > 0:
         image_results_index = image_results_index -1
         update_image_to_index()
+
+
+def open_spreadsheet():
+    global current_result, image_results, image_results_index
+    file_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
+    if file_path:
+        with open(file_path, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["Image Name","Heart Distance", "Thorax Distance", "Cardiothoracic Ratio","Percentage","Diagnosis"])
+            for result in image_results:
+                writer.writerow([result.file_path,result.heart.distance(), result.thorax.distance(), result.calculate_ratio(), result.calculate_percentage(), result.symptomatic()])
 
 
 # What happens when the mouse is pressed down on the image for the heart diameter
@@ -280,12 +291,17 @@ stop_button.configure(bg="#D31A38")
 stop_button.place(x=50, y=330)
 
 # Creates a button to move to the next image
-next_image_button = tk.Button(button_frame, text=">", command= next_image)
-next_image_button.place(x=100, y=0)
+next_image_button = tk.Button(window, text=">", command= next_image)
+next_image_button.place(x=100, y=650)
 
 # Creates a button to move to the previous image
-previous_image_button = tk.Button(button_frame, text="<", command=previous_image)
-previous_image_button.place(x=30, y=0)
+previous_image_button = tk.Button(window, text="<", command=previous_image)
+previous_image_button.place(x=30, y=650)
+
+
+# Creates a button to open a spreadsheet
+spreadsheet_button = tk.Button(button_frame, text = "Save to Spreadsheet", command= open_spreadsheet)
+spreadsheet_button.place(x=50, y=150)
 
 
 
