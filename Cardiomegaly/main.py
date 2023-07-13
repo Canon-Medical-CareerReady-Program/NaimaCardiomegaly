@@ -3,21 +3,22 @@ from tkinter import filedialog
 from coordinate import Coordinate
 from result import Result
 from typing import List
+from PIL import Image, ImageTk
 
 
 current_result :Result= None
 image_results :List[Result]= []
 image_results_index= 0
+original_image :Image= None
 
 # Creates the image/canvas
 def update_image_to_index():
-    global current_result, image_results, image_results_index
-
+    global current_result, image_results, image_results_index,original_image
     current_result = image_results[image_results_index]
-    image = tk.PhotoImage(file=current_result.file_path)
-    canvas.config(width=image.width(), height=image.height())
-    canvas.create_image(0, 0, anchor="nw", image=image)
-    canvas.image = image  # Save a reference to the image to prevent it from being garbage collected
+    
+    
+    original_image= Image.open(current_result.file_path)
+    update_image()
     
     update_heart_coordinates()
     update_thorax_coordinates()
@@ -29,6 +30,37 @@ def update_image_to_index():
 
     update_heart_line()
     update_thorax_line()
+
+
+def canvas_resized(event):
+    print(f"{canvas.winfo_width()}, {canvas.winfo_height()}")
+    update_image()
+
+def update_image():
+    global original_image, tkimage
+    
+    if original_image !=None:
+        canvas_width = canvas.winfo_width()
+        canvas_height = canvas.winfo_height()
+        image_ratio = original_image.size[0] / original_image.size[1]
+
+        canvas_ratio = canvas_width / canvas_height
+
+        if canvas_ratio > image_ratio:
+            height = int(canvas_height)
+            width = int(height * image_ratio)
+        else:
+            width = int(canvas_width)
+            height = int(width / image_ratio)
+
+
+        size_tuple= (width,height)
+        resized_image = original_image.resize(size=size_tuple)
+        tkimage= ImageTk.PhotoImage(image=resized_image)
+        print(resized_image)
+
+        canvas.create_image(0, 0, anchor="nw", image=tkimage)
+
 
 # Opens file explorer to insert an image (either a png, jpg or a jpeg file)
 def open_image():
@@ -210,8 +242,9 @@ button_frame= tk.Frame(window,bg="lightgray", width=400)
 button_frame.pack(side=tk.LEFT, fill=tk.BOTH)
 
 # Creates the canvas
-canvas = tk.Canvas(window)
-canvas.pack(side=tk.RIGHT, fill=tk.Y, expand=True)
+canvas = tk.Canvas(window, bd=0, highlightthickness=0, relief="ridge")
+canvas.bind("<Configure>", canvas_resized)
+canvas.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
 
 
