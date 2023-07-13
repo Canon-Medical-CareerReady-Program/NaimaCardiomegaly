@@ -33,12 +33,19 @@ def update_image_to_index():
 
 
 def canvas_resized(event):
+    global current_result
     print(f"{canvas.winfo_width()}, {canvas.winfo_height()}")
     update_image()
+    update_heart_line()
+    update_thorax_line()
+
+
 
 def update_image():
-    global original_image, tkimage
+
+    global current_result, original_image, tkimage
     
+  
     if original_image !=None:
         canvas_width = canvas.winfo_width()
         canvas_height = canvas.winfo_height()
@@ -126,10 +133,11 @@ def draw_hline(event):
     
 def update_heart_line():
     canvas.delete("heart")
-    start = current_result.heart.start
-    end = current_result.heart.end
-    canvas.create_line(start.x, start.y, end.x, end.y, tags="heart", fill="yellow", width=2)
-
+    if current_result != None:
+        start = current_result.heart.start
+        end = current_result.heart.end
+        canvas.create_line(start.x, start.y, end.x, end.y, tags="heart", fill="yellow", width=2)
+        canvas.tag_raise("heart")
 
 def update_heart_coordinates():
     start = current_result.heart.start
@@ -170,10 +178,12 @@ def draw_Lline(event):
 
 def update_thorax_line():
     
-    start = current_result.thorax.start
-    end = current_result.thorax.end
-    canvas.delete("thorax")
-    canvas.create_line(start.x, start.y, end.x, end.y, tags="thorax", fill="red", width=2)
+    if current_result != None:
+        start = current_result.thorax.start
+        end = current_result.thorax.end
+        canvas.delete("thorax")
+        canvas.create_line(start.x, start.y, end.x, end.y, tags="thorax", fill="red", width=2)
+        canvas.tag_raise("thorax")
 
 # Updates the thorax coordinates depending on the image
 def update_thorax_coordinates():
