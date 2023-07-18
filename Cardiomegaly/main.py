@@ -66,6 +66,7 @@ def update_image():
         tkimage= ImageTk.PhotoImage(image=resized_image)
         print(resized_image)
 
+
         canvas.create_image(0, 0, anchor= "nw", image=tkimage)
 
 
@@ -109,9 +110,16 @@ def open_spreadsheet():
                 writer.writerow([result.file_path,result.heart.distance(), result.thorax.distance(), result.calculate_ratio(), result.calculate_percentage(), result.symptomatic()])
 
 
-
-
-
+def calculate_scale_factor():
+    global original_image, canvas
+    if original_image != None:
+        canvas_width = canvas.winfo_width()
+        canvas_height = canvas.winfo_height()
+        image_width, image_height = original_image.size
+        scale_x = canvas_width / image_width
+        scale_y = canvas_height / image_height
+        return min(scale_x, scale_y)
+    return 1.0
 
 
 # What happens when the mouse is pressed down on the image for the heart diameter
@@ -134,14 +142,13 @@ def update_heart_distance():
 # What happens when the mouse is dragged along the image for the heart diameter
 def start_hline(event):
     global current_result
-    current_result.heart.start.x = event.x
-    current_result.heart.start.y = event.y
+    current_result.heart.start = Coordinate(event.x, event.y) / calculate_scale_factor()
     canvas.bind("<B1-Motion>", draw_hline)
 
 # The heart line being seen by the user
 def draw_hline(event):
-    current_result.heart.end.x = event.x
-    current_result.heart.end.y = event.y
+    current_result.heart.end = Coordinate(event.x, event.y) / calculate_scale_factor()
+    current_result.heart.end = Coordinate(round(current_result.heart.end.x), round(current_result.heart.end.y))
     update_heart_line()
 
 # Displays the co-ordinates of where the heart diameter starts and ends
@@ -151,10 +158,12 @@ def draw_hline(event):
 def update_heart_line():
     canvas.delete("heart")
     if current_result != None:
-        start = current_result.heart.start
-        end = current_result.heart.end
-        canvas.create_line(start.x, start.y, end.x, end.y, tags="heart", fill="yellow", width=2)
-        canvas.tag_raise("heart")
+        scale_factor = calculate_scale_factor()
+        if scale_factor != None:
+            start = current_result.heart.start * scale_factor
+            end = current_result.heart.end * scale_factor
+            canvas.create_line(start.x, start.y, end.x, end.y, tags="heart", fill="yellow", width=2)
+            canvas.tag_raise("heart")
 
 # Changes the heart coordinates when the image changes
 def update_heart_coordinates():
@@ -187,12 +196,13 @@ def update_thorax_distance():
 # What happens when the mouse is dragged along the image for the thorax diameter
 def start_Tline(event):
     global current_result
-    current_result.thorax.start = Coordinate(event.x, event.y)
+    current_result.thorax.start = Coordinate(event.x, event.y) / calculate_scale_factor()
     canvas.bind("<B1-Motion>", draw_Tline)
 
 # The lung line being seen by the user
 def draw_Tline(event):
-    current_result.thorax.end = Coordinate(event.x, event.y)
+    current_result.thorax.end = Coordinate(event.x, event.y) / calculate_scale_factor()
+    current_result.thorax.end = Coordinate(round(current_result.thorax.end.x), round(current_result.thorax.end.y))
     update_thorax_line()
 
     update_thorax_coordinates()
@@ -200,11 +210,13 @@ def draw_Tline(event):
 # Updates the thorax coordinates depending on the image
 def update_thorax_line():
     if current_result != None:
-        start = current_result.thorax.start
-        end = current_result.thorax.end
-        canvas.delete("thorax")
-        canvas.create_line(start.x, start.y, end.x, end.y, tags="thorax", fill="red", width=2)
-        canvas.tag_raise("thorax")
+        scale_factor = calculate_scale_factor()
+        if scale_factor != None:
+            start = current_result.thorax.start * scale_factor
+            end = current_result.thorax.end * scale_factor
+            canvas.delete("thorax")
+            canvas.create_line(start.x, start.y, end.x, end.y, tags="thorax", fill="red", width=2)
+            canvas.tag_raise("thorax")
 
 # Updates the thorax coordinates depending on the image
 def update_thorax_coordinates():
@@ -357,6 +369,7 @@ percentage_label.place(x=50, y=510)
 # Creates a label to display the diagnosis of the patient
 diagnosis_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
 diagnosis_label.place(x=50, y=550)
+
 
 # Run the main event loop
 window.mainloop()
