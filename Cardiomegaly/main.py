@@ -66,7 +66,7 @@ def update_image():
         tkimage= ImageTk.PhotoImage(image=resized_image)
         print(resized_image)
 
-        canvas.create_image(0, 0, anchor="nw", image=tkimage)
+        canvas.create_image(0, 0, anchor= "nw", image=tkimage)
 
 
 # Opens file explorer to insert an image (either a png, jpg or a jpeg file)
@@ -104,7 +104,7 @@ def open_spreadsheet():
     if file_path:
         with open(file_path, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(["Image Name","Heart Distance", "Thorax Distance", "Cardiothoracic Ratio","Percentage","Diagnosis"])
+            writer.writerow(["Image Name","Heart Distance", "Thorax Distance", "Cardiothoracic Ratio","Percentage","Symptomatic"])
             for result in image_results:
                 writer.writerow([result.file_path,result.heart.distance(), result.thorax.distance(), result.calculate_ratio(), result.calculate_percentage(), result.symptomatic()])
 
@@ -281,7 +281,7 @@ start_hbutton.configure(bg="#797EF6")
 start_hbutton.place(x=50, y=250)
 
 # Creates a button to draw the lung diameter
-start_Lbutton= tk.Button(button_frame,text="Draw Lung Diameter",command=start_drawing_Lline)
+start_Lbutton= tk.Button(button_frame,text="Draw Thorax Diameter",command=start_drawing_Lline)
 start_Lbutton.configure(bg="#797EF6")
 start_Lbutton.place(x=50, y=290)
 
@@ -291,12 +291,12 @@ stop_button.configure(bg="#D31A38")
 stop_button.place(x=50, y=330)
 
 # Creates a button to move to the next image
-next_image_button = tk.Button(window, text=">", command= next_image)
-next_image_button.place(x=100, y=650)
+next_image_button = tk.Button(canvas, text=">", command= next_image)
+next_image_button.pack(side=tk.RIGHT, anchor="ne")
 
 # Creates a button to move to the previous image
-previous_image_button = tk.Button(window, text="<", command=previous_image)
-previous_image_button.place(x=30, y=650)
+previous_image_button = tk.Button(canvas, text="<", command=previous_image)
+previous_image_button.pack(side=tk.LEFT, anchor="ne")
 
 
 # Creates a button to open a spreadsheet
@@ -307,11 +307,11 @@ spreadsheet_button.place(x=50, y=150)
 
 #Creates a label for the heart co-ordinates
 Hcoordinates_label = tk.Label(button_frame, text="", font=("Verdana",8),bg="lightgray")
-Hcoordinates_label.place(x=50,y=800)
+Hcoordinates_label.place(x=50,y=620)
 
 # Creates a label for the heart co-ordinates
 Lcoordinates_label = tk.Label(button_frame, text="", font=("Verdana",8),bg="lightgray")
-Lcoordinates_label.place(x=50,y=820)
+Lcoordinates_label.place(x=50,y=650)
 
 # Creates a label to display the distance of the heart
 Hdistance_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
@@ -319,7 +319,7 @@ Hdistance_label.place(x=50, y=430)
 
 #  Creates a label to display the distance of the lungs
 Ldistance_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
-Ldistance_label.place(x=50, y=470)
+Ldistance_label.place(x=50, y=450)
 
 # Creates a label to show the user what its called lmao
 title_label= tk.Label(button_frame,text="Cardiomegaly Detector", font=("Verdana",12),bg="lightgray")
@@ -339,15 +339,15 @@ distances_label.place(x=50,y=400)
 
 # Creates a label to show the user the ratio
 ratio_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray" )
-ratio_label.place(x=50, y=570)
+ratio_label.place(x=50, y=490)
 
 # Creates a label to display the percentage
 percentage_label=tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
-percentage_label.place(x=50, y=590)
+percentage_label.place(x=50, y=510)
 
 # Creates a label to display the diagnosis of the patient
 diagnosis_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
-diagnosis_label.place(x=50, y=630)
+diagnosis_label.place(x=50, y=540)
 
 # Run the main event loop
 window.mainloop()
