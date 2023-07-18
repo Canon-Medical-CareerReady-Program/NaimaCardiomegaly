@@ -108,7 +108,7 @@ def open_spreadsheet():
             for result in image_results:
                 writer.writerow([result.file_path,result.heart.distance(), result.thorax.distance(), result.calculate_ratio(), result.calculate_percentage(), result.symptomatic()])
 
-
+# Calculates the scale factor
 def calculate_scale_factor():
     global original_image, canvas
     if original_image != None:
@@ -241,9 +241,9 @@ def calculate_ratio_and_percentage():
         percentage_label.config(text=f"Percentage: {current_result.calculate_percentage():.2f}%")
 
         if current_result.symptomatic():
-            diagnosis_label.config(text="The patient exhibits symptoms of having \ncardiomegaly")
+            diagnosis_label.config(text="Results indicate cardiomegaly")
         else:
-            diagnosis_label.config(text="The patient does not exhibit symptoms of \nhaving cardiomegaly")
+            diagnosis_label.config(text="Results indicate cardiomegaly")
     
     else:
         ratio_label.config(text=f"Cannot calculate. Distances missing")
