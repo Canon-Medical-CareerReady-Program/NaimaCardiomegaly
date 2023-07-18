@@ -19,6 +19,7 @@ def update_image_to_index():
     
     original_image= Image.open(current_result.file_path)
     update_image()
+   
     
     update_heart_coordinates()
     update_thorax_coordinates()
@@ -81,7 +82,7 @@ def open_image():
         update_image_to_index()
  
 
-def next_image():
+def next_image(event=None):
     global current_result, image_results, image_results_index
     
     if image_results_index < len(image_results) - 1:
@@ -90,7 +91,7 @@ def next_image():
     
 
 
-def previous_image():
+def previous_image(event=None):
     global current_result, image_results, image_results_index
 
     if image_results_index > 0:
@@ -111,6 +112,8 @@ def open_spreadsheet():
 
 # What happens when the mouse is pressed down on the image for the heart diameter
 def start_drawing_hline():
+    reset_button_colors()
+    start_hbutton.configure(bg="#9DBEFF")
     canvas.bind("<Button-1>", start_hline)
     canvas.bind("<ButtonRelease-1>",calculate_Hdistance)
     
@@ -160,6 +163,8 @@ def update_heart_coordinates():
 
 # What happens when the mouse is pressed down on the image for the lung diameter
 def start_drawing_Lline():
+    reset_button_colors()
+    start_Lbutton.configure(bg="#9DBEFF")
     canvas.bind("<Button-1>", start_Lline)
     canvas.bind("<ButtonRelease-1>",calculate_Ldistance)
 
@@ -229,7 +234,9 @@ def calculate_ratio_and_percentage():
         percentage_label.config(text="")
         diagnosis_label.config(text="")
 
-
+def reset_button_colors():
+    start_hbutton.configure(bg="#797EF6")  # Reset heart button color to original blue
+    start_Lbutton.configure(bg="#797EF6")
 
 
 
@@ -257,6 +264,8 @@ def stop_drawing():
 window = tk.Tk()
 window.title("Cardiomegaly Detector")
 window.state("zoomed")
+window.bind("<Right>", next_image)
+window.bind("<Left>", previous_image)
 
 # Creates a frame for the buttons
 button_frame= tk.Frame(window,bg="lightgray", width=400)
@@ -290,19 +299,11 @@ stop_button = tk.Button(button_frame, text="Clear Canvas", command=stop_drawing)
 stop_button.configure(bg="#D31A38")
 stop_button.place(x=50, y=330)
 
-# Creates a button to move to the next image
-next_image_button = tk.Button(canvas, text=">", command= next_image)
-next_image_button.pack(side=tk.RIGHT, anchor="ne")
-
-# Creates a button to move to the previous image
-previous_image_button = tk.Button(canvas, text="<", command=previous_image)
-previous_image_button.pack(side=tk.LEFT, anchor="ne")
-
 
 # Creates a button to open a spreadsheet
 spreadsheet_button = tk.Button(button_frame, text = "Save to Spreadsheet", command= open_spreadsheet)
 spreadsheet_button.place(x=50, y=150)
-
+spreadsheet_button.configure(bg="#797EF6")
 
 
 #Creates a label for the heart co-ordinates
@@ -347,7 +348,7 @@ percentage_label.place(x=50, y=510)
 
 # Creates a label to display the diagnosis of the patient
 diagnosis_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
-diagnosis_label.place(x=50, y=540)
+diagnosis_label.place(x=50, y=530)
 
 # Run the main event loop
 window.mainloop()
