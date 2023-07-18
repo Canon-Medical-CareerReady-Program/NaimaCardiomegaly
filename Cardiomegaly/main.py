@@ -35,7 +35,6 @@ def update_image_to_index():
 # Resizes the canvas when the window is resized
 def canvas_resized(event):
     global current_result
-    print(f"{canvas.winfo_width()}, {canvas.winfo_height()}")
     update_image()
     update_heart_line()
     update_thorax_line()
@@ -64,7 +63,7 @@ def update_image():
         size_tuple= (width,height)
         resized_image = original_image.resize(size=size_tuple)
         tkimage= ImageTk.PhotoImage(image=resized_image)
-        print(resized_image)
+        
 
 
         canvas.create_image(0, 0, anchor= "nw", image=tkimage)
@@ -169,7 +168,7 @@ def update_heart_line():
 def update_heart_coordinates():
     start = current_result.heart.start
     end = current_result.heart.end
-    Hcoordinates_label.config(text=f"Heart-  Start: ({start.x},{start.y}) End: ({end.x},{end.y})")
+    Hcoordinates_label.config(text=f"Heart-  Start: ({round(start.x)},{round(start.y)}) End: ({round(end.x)},{round(end.y)})")
 
 
 
@@ -222,7 +221,7 @@ def update_thorax_line():
 def update_thorax_coordinates():
     start = current_result.thorax.start
     end = current_result.thorax.end
-    Lcoordinates_label.config(text=f"Thorax-  Start: ({start.x},{start.y}) End: ({end.x},{end.y})")
+    Lcoordinates_label.config(text=f"Thorax-  Start: ({round(start.x)},{round(start.y)}) End: ({round(end.x)},{round(end.y)})")
 
 
 
@@ -328,19 +327,19 @@ spreadsheet_button.configure(bg="#797EF6")
 
 #Creates a label for the heart co-ordinates
 Hcoordinates_label = tk.Label(button_frame, text="", font=("Verdana",8),bg="lightgray")
-Hcoordinates_label.place(x=50,y=620)
+Hcoordinates_label.place(x=50,y=630)
 
 # Creates a label for the heart co-ordinates
 Lcoordinates_label = tk.Label(button_frame, text="", font=("Verdana",8),bg="lightgray")
-Lcoordinates_label.place(x=50,y=650)
+Lcoordinates_label.place(x=50,y=660)
 
 # Creates a label to display the distance of the heart
 Hdistance_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
-Hdistance_label.place(x=50, y=430)
+Hdistance_label.place(x=50, y=410)
 
 #  Creates a label to display the distance of the lungs
 Ldistance_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
-Ldistance_label.place(x=50, y=450)
+Ldistance_label.place(x=50, y=430)
 
 # Creates a label to show the user what its called lmao
 title_label= tk.Label(button_frame,text="Cardiomegaly Detector", font=("Verdana",12),bg="lightgray")
@@ -356,19 +355,19 @@ coordinates_label.place(x=50,y=590)
 
 #Creates a label to show the user the distances
 distances_label=tk.Label(button_frame,text="Distances:",font=("Verdana",12),bg="lightgray")
-distances_label.place(x=50,y=400)
+distances_label.place(x=50,y=380)
 
 # Creates a label to show the user the ratio
 ratio_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray" )
-ratio_label.place(x=50, y=490)
+ratio_label.place(x=50, y=470)
 
 # Creates a label to display the percentage
 percentage_label=tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
-percentage_label.place(x=50, y=510)
+percentage_label.place(x=50, y=500)
 
 # Creates a label to display the diagnosis of the patient
 diagnosis_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
-diagnosis_label.place(x=50, y=550)
+diagnosis_label.place(x=50, y=530)
 
 
 # Run the main event loop
