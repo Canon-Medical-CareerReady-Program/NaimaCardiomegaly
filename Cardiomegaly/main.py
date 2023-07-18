@@ -32,7 +32,7 @@ def update_image_to_index():
     update_heart_line()
     update_thorax_line()
 
-
+# Resizes the canvas when the window is resized
 def canvas_resized(event):
     global current_result
     print(f"{canvas.winfo_width()}, {canvas.winfo_height()}")
@@ -41,9 +41,8 @@ def canvas_resized(event):
     update_thorax_line()
 
 
-
+# Updates the image after the canvas is resized
 def update_image():
-
     global current_result, original_image, tkimage
     
   
@@ -81,7 +80,7 @@ def open_image():
             image_results.append(Result(file_path))
         update_image_to_index()
  
-
+# Switches to the next image
 def next_image(event=None):
     global current_result, image_results, image_results_index
     
@@ -90,7 +89,7 @@ def next_image(event=None):
         update_image_to_index()
     
 
-
+# Switches to the previous image
 def previous_image(event=None):
     global current_result, image_results, image_results_index
 
@@ -98,7 +97,7 @@ def previous_image(event=None):
         image_results_index = image_results_index -1
         update_image_to_index()
 
-
+# Opens up a spreadsheet
 def open_spreadsheet():
     global current_result, image_results, image_results_index
     file_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
@@ -108,6 +107,11 @@ def open_spreadsheet():
             writer.writerow(["Image Name","Heart Distance", "Thorax Distance", "Cardiothoracic Ratio","Percentage","Symptomatic"])
             for result in image_results:
                 writer.writerow([result.file_path,result.heart.distance(), result.thorax.distance(), result.calculate_ratio(), result.calculate_percentage(), result.symptomatic()])
+
+
+
+
+
 
 
 # What happens when the mouse is pressed down on the image for the heart diameter
@@ -136,15 +140,14 @@ def start_hline(event):
 
 # The heart line being seen by the user
 def draw_hline(event):
-    
     current_result.heart.end.x = event.x
     current_result.heart.end.y = event.y
     update_heart_line()
 
-    
 # Displays the co-ordinates of where the heart diameter starts and ends
     update_heart_coordinates()
-    
+
+# Changes the heart line when the image is changed    
 def update_heart_line():
     canvas.delete("heart")
     if current_result != None:
@@ -153,6 +156,7 @@ def update_heart_line():
         canvas.create_line(start.x, start.y, end.x, end.y, tags="heart", fill="yellow", width=2)
         canvas.tag_raise("heart")
 
+# Changes the heart coordinates when the image changes
 def update_heart_coordinates():
     start = current_result.heart.start
     end = current_result.heart.end
@@ -161,11 +165,12 @@ def update_heart_coordinates():
 
 
 
-# What happens when the mouse is pressed down on the image for the lung diameter
-def start_drawing_Lline():
+
+# What happens when the mouse is pressed down on the image for the thorax diameter
+def start_drawing_Tline():
     reset_button_colors()
     start_Lbutton.configure(bg="#9DBEFF")
-    canvas.bind("<Button-1>", start_Lline)
+    canvas.bind("<Button-1>", start_Tline)
     canvas.bind("<ButtonRelease-1>",calculate_Ldistance)
 
 # Calculates lung distance
@@ -179,21 +184,21 @@ def update_thorax_distance():
     distance = current_result.thorax.distance()
     Ldistance_label.config(text=f"Thorax Distance: {distance:.2f} px") 
 
-# What happens when the mouse is dragged along the image for the lung diameter
-def start_Lline(event):
+# What happens when the mouse is dragged along the image for the thorax diameter
+def start_Tline(event):
     global current_result
     current_result.thorax.start = Coordinate(event.x, event.y)
-    canvas.bind("<B1-Motion>", draw_Lline)
+    canvas.bind("<B1-Motion>", draw_Tline)
 
 # The lung line being seen by the user
-def draw_Lline(event):
+def draw_Tline(event):
     current_result.thorax.end = Coordinate(event.x, event.y)
     update_thorax_line()
 
     update_thorax_coordinates()
 
+# Updates the thorax coordinates depending on the image
 def update_thorax_line():
-    
     if current_result != None:
         start = current_result.thorax.start
         end = current_result.thorax.end
@@ -234,6 +239,8 @@ def calculate_ratio_and_percentage():
         percentage_label.config(text="")
         diagnosis_label.config(text="")
 
+
+# Resets the button colours
 def reset_button_colors():
     start_hbutton.configure(bg="#797EF6")  # Reset heart button color to original blue
     start_Lbutton.configure(bg="#797EF6")
@@ -290,7 +297,7 @@ start_hbutton.configure(bg="#797EF6")
 start_hbutton.place(x=50, y=250)
 
 # Creates a button to draw the lung diameter
-start_Lbutton= tk.Button(button_frame,text="Draw Thorax Diameter",command=start_drawing_Lline)
+start_Lbutton= tk.Button(button_frame,text="Draw Thorax Diameter",command=start_drawing_Tline)
 start_Lbutton.configure(bg="#797EF6")
 start_Lbutton.place(x=50, y=290)
 
@@ -299,11 +306,12 @@ stop_button = tk.Button(button_frame, text="Clear Canvas", command=stop_drawing)
 stop_button.configure(bg="#D31A38")
 stop_button.place(x=50, y=330)
 
-
 # Creates a button to open a spreadsheet
 spreadsheet_button = tk.Button(button_frame, text = "Save to Spreadsheet", command= open_spreadsheet)
 spreadsheet_button.place(x=50, y=150)
 spreadsheet_button.configure(bg="#797EF6")
+
+
 
 
 #Creates a label for the heart co-ordinates
@@ -332,7 +340,7 @@ subheader_label.place(x=50,y=200)
 
 # Creates a label to show the user the co-ordinates
 coordinates_label= tk.Label(button_frame,text="Co-ordinates:",font=("Verdana",12),bg="lightgray")
-coordinates_label.place(x=50,y=750)
+coordinates_label.place(x=50,y=590)
 
 #Creates a label to show the user the distances
 distances_label=tk.Label(button_frame,text="Distances:",font=("Verdana",12),bg="lightgray")
@@ -348,7 +356,7 @@ percentage_label.place(x=50, y=510)
 
 # Creates a label to display the diagnosis of the patient
 diagnosis_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
-diagnosis_label.place(x=50, y=530)
+diagnosis_label.place(x=50, y=550)
 
 # Run the main event loop
 window.mainloop()
