@@ -263,7 +263,7 @@ def reset_button_colors():
 
 
 # Deletes the lines drawn
-def stop_drawing(event):
+def stop_drawing():
     canvas.unbind("<Button-1>")
     canvas.unbind("<B1-Motion>")
     canvas.delete("heart")
@@ -281,6 +281,7 @@ def stop_drawing(event):
 
 def open_controls_window():
     controls_window = tk.Toplevel(window)
+    controls_window.minsize(225,225)
     controls_window.title("Controls")
     
     next_image_label = tk.Label(controls_window, text="Next Image = Right Arrow Key")
@@ -291,12 +292,31 @@ def open_controls_window():
 
     spreadsheet_label = tk.Label(controls_window, text="Save Spreadsheet = Ctrl + S")
     spreadsheet_label.pack()
-    
+
     shortcuts_label = tk.Label(controls_window, text= "Shortcuts:", font=("Verdana",10))
     shortcuts_label.pack(pady=5)
 
+    open_image_label = tk.Label(controls_window, text= "Open Image/Images = Ctrl + O")
+    open_image_label.pack()
+
     delete_label = tk.Label(controls_window, text="Stop Drawing = Delete Key")
     delete_label.pack()
+
+
+# Shortcut Keys
+def open_image_shortcut(event):
+    button.invoke()
+
+def heart_shortcut(event):
+    start_hbutton.invoke()
+
+def thorax_shortcut(event):
+    start_Lbutton.invoke()
+
+def clear_shortcut(event):
+    stop_button.invoke()
+
+
 
 
 
@@ -306,15 +326,19 @@ window.title("Cardiomegaly Detector")
 window.state("zoomed")
 window.minsize(400,700)
 
+window.bind("<Control-o>",open_image_shortcut)
 window.bind("<Right>", next_image)
 window.bind("<Left>", previous_image)
 
-window.bind("<Delete>", stop_drawing)
+window.bind("<Delete>", clear_shortcut)
 window.bind("<Control-s>", open_spreadsheet)
+
+window.bind("<KeyPress-h>",heart_shortcut)
+window.bind("<KeyPress-t>", thorax_shortcut)
 
 menubar = tk.Menu(window)
 controls_menu = tk.Menu(menubar, tearoff=0)
-controls_menu.add_command(label="Open Controls", command=open_controls_window)
+controls_menu.add_command(label="Controls", command=open_controls_window)
 menubar.add_cascade(label="Help", menu=controls_menu)
 
 # Creates a frame for the buttons
