@@ -32,6 +32,7 @@ def update_image_to_index():
     update_heart_line()
     update_thorax_line()
 
+
 # Resizes the canvas when the window is resized
 def canvas_resized(event):
     global current_result
@@ -79,7 +80,9 @@ def open_image():
         for file_path in file_paths:
             image_results.append(Result(file_path))
         update_image_to_index()
- 
+        
+
+
 # Switches to the next image
 def next_image(event=None):
     global current_result, image_results, image_results_index
@@ -98,7 +101,7 @@ def previous_image(event=None):
         update_image_to_index()
 
 # Opens up a spreadsheet
-def open_spreadsheet():
+def open_spreadsheet(event):
     global current_result, image_results, image_results_index
     file_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
     if file_path:
@@ -260,7 +263,7 @@ def reset_button_colors():
 
 
 # Deletes the lines drawn
-def stop_drawing():
+def stop_drawing(event):
     canvas.unbind("<Button-1>")
     canvas.unbind("<B1-Motion>")
     canvas.delete("heart")
@@ -276,14 +279,43 @@ def stop_drawing():
     current_result.thorax.clear()
 
 
+def open_controls_window():
+    controls_window = tk.Toplevel(window)
+    controls_window.title("Controls")
+    
+    next_image_label = tk.Label(controls_window, text="Next Image = Right Arrow Key")
+    next_image_label.pack()
+    
+    previous_image_label = tk.Label(controls_window, text="Previous Image = Left Arrow Key")
+    previous_image_label.pack()
+
+    spreadsheet_label = tk.Label(controls_window, text="Save Spreadsheet = Ctrl + S")
+    spreadsheet_label.pack()
+    
+    shortcuts_label = tk.Label(controls_window, text= "Shortcuts:", font=("Verdana",10))
+    shortcuts_label.pack(pady=5)
+
+    delete_label = tk.Label(controls_window, text="Stop Drawing = Delete Key")
+    delete_label.pack()
+
 
 
 # Create the main window
 window = tk.Tk()
 window.title("Cardiomegaly Detector")
 window.state("zoomed")
+window.minsize(400,700)
+
 window.bind("<Right>", next_image)
 window.bind("<Left>", previous_image)
+
+window.bind("<Delete>", stop_drawing)
+window.bind("<Control-s>", open_spreadsheet)
+
+menubar = tk.Menu(window)
+controls_menu = tk.Menu(menubar, tearoff=0)
+controls_menu.add_command(label="Open Controls", command=open_controls_window)
+menubar.add_cascade(label="Help", menu=controls_menu)
 
 # Creates a frame for the buttons
 button_frame= tk.Frame(window,bg="lightgray", width=400)
@@ -316,11 +348,6 @@ start_Lbutton.place(x=50, y=290)
 stop_button = tk.Button(button_frame, text="Clear Canvas", command=stop_drawing)
 stop_button.configure(bg="#D31A38")
 stop_button.place(x=50, y=330)
-
-# Creates a button to open a spreadsheet
-spreadsheet_button = tk.Button(button_frame, text = "Save to Spreadsheet", command= open_spreadsheet)
-spreadsheet_button.place(x=50, y=150)
-spreadsheet_button.configure(bg="#797EF6")
 
 
 
@@ -357,6 +384,7 @@ coordinates_label.place(x=50,y=590)
 distances_label=tk.Label(button_frame,text="Distances:",font=("Verdana",12),bg="lightgray")
 distances_label.place(x=50,y=380)
 
+
 # Creates a label to show the user the ratio
 ratio_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray" )
 ratio_label.place(x=50, y=470)
@@ -369,6 +397,7 @@ percentage_label.place(x=50, y=500)
 diagnosis_label= tk.Label(button_frame, text="", font=("Verdana",10),bg="lightgray")
 diagnosis_label.place(x=50, y=530)
 
+window.config(menu=menubar)
 
 # Run the main event loop
 window.mainloop()
