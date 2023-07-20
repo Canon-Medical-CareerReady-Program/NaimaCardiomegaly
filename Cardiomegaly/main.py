@@ -29,7 +29,7 @@ def read_conversion_measurements(file_path):
             }
     return conversion_measurements
 
-csv_file_path = 'C:/Projects/NaimaCardiomegaly/Data/BBox_List_2017.csv'
+csv_file_path = 'C:\Projects\OthersPrograms\NaimaCardiomegaly\Data\BBox_List_2017.csv'
 conversion_measurements = read_conversion_measurements(csv_file_path)
 
 
@@ -242,9 +242,9 @@ def update_thorax_distance():
         x_conversion = conversion_measurements[image_name]['x_conversion']
         # y_conversion = conversion_measurements[image_name]['y_conversion']
         distance_mm = distance * x_conversion
-        Ldistance_label.config(text=f"Thorax Distance: {distance_mm:.2f} mm")
+        Ldistance_label.config(text=f"poops: {distance_mm:.2f} mm")
     else:
-        Ldistance_label.config(text=f"Thorax Distance: {distance:.2f} px")
+        Ldistance_label.config(text=f"Ur mum so ugly: {distance:.2f} px")
 
 
 # What happens when the mouse is dragged along the image for the thorax diameter
@@ -298,18 +298,18 @@ def calculate_ratio_and_percentage():
 
     if heart_dist !=0 and thorax_dist !=0:
         current_result.calculate_ratio()
-        ratio_label.config(text=f"Cardiothoracic Ratio: {current_result.calculate_ratio():.2f}")
+        ratio_label.config(text=f"Poo Ratio: {current_result.calculate_ratio():.2f}")
         
         current_result.calculate_percentage()
         percentage_label.config(text=f"Percentage: {current_result.calculate_percentage():.2f}%")
 
         if current_result.symptomatic():
-            diagnosis_label.config(text="Results indicate cardiomegaly")
+            diagnosis_label.config(text="Results indicate broke people")
         else:
-            diagnosis_label.config(text="Results indicate cardiomegaly")
+            diagnosis_label.config(text="Results indicate BDE")
     
     else:
-        ratio_label.config(text=f"Cannot calculate. Distances missing")
+        ratio_label.config(text=f"Cannot calculate u smell")
         percentage_label.config(text="")
         diagnosis_label.config(text="")
 
