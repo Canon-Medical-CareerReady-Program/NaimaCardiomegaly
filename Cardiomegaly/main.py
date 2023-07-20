@@ -5,11 +5,33 @@ from result import Result
 from typing import List
 from PIL import Image, ImageTk
 import csv
+import os
 
 current_result :Result= None
 image_results :List[Result]= []
 image_results_index= 0
 original_image :Image= None
+
+
+# Reads a csv file to get the measurements
+def read_conversion_measurements(file_path):
+    
+    conversion_measurements={}
+    
+
+    with open(file_path, 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            image_name = row['Image Index']
+            conversion_measurements[image_name] = {
+                'x_conversion': float(row["OriginalImagePixelSpacing[x"]),
+                'y_conversion': float(row["y]"])
+            }
+    return conversion_measurements
+
+csv_file_path = 'C:/Projects/NaimaCardiomegaly/Data/BBox_List_2017.csv'
+conversion_measurements = read_conversion_measurements(csv_file_path)
+
 
 # Creates the image/canvas
 def update_image_to_index():
@@ -138,18 +160,29 @@ def calculate_Hdistance(event):
     calculate_ratio_and_percentage()
 
 def update_heart_distance():
+    global current_result, conversion_measurements
     distance = current_result.heart.distance()
-    Hdistance_label.config(text=f"Heart Distance: {distance:.2f} px")
+
+    image_name = os.path.basename(current_result.file_path)
+    if image_name in conversion_measurements:
+        x_conversion = conversion_measurements[image_name]['x_conversion']
+        # y_conversion = conversion_measurements[image_name]['y_conversion']
+        distance_mm = distance * x_conversion
+        Hdistance_label.config(text=f"Heart Distance: {distance_mm:.2f} mm")
+    else:
+        Hdistance_label.config(text=f"Heart Distance: {distance:.2f} px")
 
 # What happens when the mouse is dragged along the image for the heart diameter
 def start_hline(event):
     global current_result
     current_result.heart.start = Coordinate(event.x, event.y) / calculate_scale_factor()
+    print(current_result.heart.start.x)
     canvas.bind("<B1-Motion>", draw_hline)
 
 # The heart line being seen by the user
 def draw_hline(event):
     current_result.heart.end = Coordinate(event.x, event.y) / calculate_scale_factor()
+
     current_result.heart.end = Coordinate(round(current_result.heart.end.x), round(current_result.heart.end.y))
     update_heart_line()
 
@@ -171,7 +204,17 @@ def update_heart_line():
 def update_heart_coordinates():
     start = current_result.heart.start
     end = current_result.heart.end
+
+    image_name = os.path.basename(current_result.file_path)
+    if image_name in conversion_measurements:
+        x_conversion = conversion_measurements[image_name]['x_conversion']
+        # y_conversion = conversion_measurements[image_name]['y_conversion']
+        start = start * x_conversion
+        end = end * x_conversion
+
     Hcoordinates_label.config(text=f"Heart-  Start: ({round(start.x)},{round(start.y)}) End: ({round(end.x)},{round(end.y)})")
+
+ 
 
 
 
@@ -192,8 +235,17 @@ def calculate_Ldistance(event):
   
 # Updating the thorax distance
 def update_thorax_distance():
+    global current_result, conversion_measurements
     distance = current_result.thorax.distance()
-    Ldistance_label.config(text=f"Thorax Distance: {distance:.2f} px") 
+    image_name = os.path.basename(current_result.file_path)
+    if image_name in conversion_measurements:
+        x_conversion = conversion_measurements[image_name]['x_conversion']
+        # y_conversion = conversion_measurements[image_name]['y_conversion']
+        distance_mm = distance * x_conversion
+        Ldistance_label.config(text=f"Thorax Distance: {distance_mm:.2f} mm")
+    else:
+        Ldistance_label.config(text=f"Thorax Distance: {distance:.2f} px")
+
 
 # What happens when the mouse is dragged along the image for the thorax diameter
 def start_Tline(event):
@@ -224,6 +276,14 @@ def update_thorax_line():
 def update_thorax_coordinates():
     start = current_result.thorax.start
     end = current_result.thorax.end
+
+    image_name = os.path.basename(current_result.file_path)
+    if image_name in conversion_measurements:
+        x_conversion = conversion_measurements[image_name]['x_conversion']
+        # y_conversion = conversion_measurements[image_name]['y_conversion']
+        start = start * x_conversion
+        end = end * x_conversion
+
     Lcoordinates_label.config(text=f"Thorax-  Start: ({round(start.x)},{round(start.y)}) End: ({round(end.x)},{round(end.y)})")
 
 
@@ -302,6 +362,11 @@ def open_controls_window():
     delete_label = tk.Label(controls_window, text="Stop Drawing = Delete Key")
     delete_label.pack()
 
+    heart_label = tk.Label(controls_window, text= "Draw Heart Diameter = H")
+    heart_label.pack()
+
+    thorax_label = tk.Label(controls_window, text="Draw Thorax Diameter = T")
+    thorax_label.pack()
 
 # Shortcut Keys
 def open_image_shortcut(event):
