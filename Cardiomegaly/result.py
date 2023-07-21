@@ -5,6 +5,10 @@ class Result:
        self.heart = Measurement()
        self.thorax = Measurement()
        self.file_path = file_path
+       self.patient_info = None
+
+    def get_patient_info(self):
+        return self.patient_info   
 
     def calculate_ratio(self):
         ratio= self.heart.distance() / self.thorax.distance()

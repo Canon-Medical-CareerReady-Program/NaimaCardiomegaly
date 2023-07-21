@@ -1,4 +1,4 @@
-import tkinter as tk
+import tkinter as tk     # goodbye Canon :((((
 from tkinter import filedialog
 from coordinate import Coordinate
 from result import Result
@@ -11,6 +11,7 @@ current_result :Result= None
 image_results :List[Result]= []
 image_results_index= 0
 original_image :Image= None
+
 
 
 # Reads a csv file to get the measurements
@@ -29,6 +30,7 @@ def read_conversion_measurements(file_path):
             }
     return conversion_measurements
 
+
 csv_file_path = 'C:/Projects/NaimaCardiomegaly/Data/BBox_List_2017.csv'
 conversion_measurements = read_conversion_measurements(csv_file_path)
 
@@ -41,7 +43,7 @@ def update_image_to_index():
     
     original_image= Image.open(current_result.file_path)
     update_image()
-   
+
     
     update_heart_coordinates()
     update_thorax_coordinates()
@@ -103,6 +105,7 @@ def open_image():
             image_results.append(Result(file_path))
         update_image_to_index()
         
+
 
 
 # Switches to the next image
