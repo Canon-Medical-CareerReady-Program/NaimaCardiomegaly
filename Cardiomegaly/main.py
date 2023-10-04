@@ -31,7 +31,7 @@ def read_conversion_measurements(file_path):
     return conversion_measurements
 
 
-csv_file_path = 'C:/Projects/NaimaCardiomegaly/Data/BBox_List_2017.csv'
+csv_file_path = os.path.abspath('./Data/BBox_List_2017.csv')
 conversion_measurements = read_conversion_measurements(csv_file_path)
 
 
